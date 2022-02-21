@@ -54,7 +54,7 @@ bool VertexPointXYZDrawAction::refreshPropertyPtrs(
   if (!DrawAction::refreshPropertyPtrs(params_)) return false;
   if (_previousParams) {
     _pointSize = _previousParams->makeProperty<FloatProperty>(
-        _typeName + "::POINT_SIZE", 1.);
+        _typeName + "::POINT_SIZE", 5.);
   } else {
     _pointSize = nullptr;
   }

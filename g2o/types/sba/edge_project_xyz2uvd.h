@@ -24,45 +24,46 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef G2O_SBA_EDGE_SE3_EXPMAP_H
-#define G2O_SBA_EDGE_SE3_EXPMAP_H
+#ifndef G2O_SBA_EDGEPROJECTXYZ2UVD_H
+#define G2O_SBA_EDGEPROJECTXYZ2UVD_H
 
 #include "g2o/core/base_binary_edge.h"
+#include "g2o/types/slam3d/vertex_pointxyz.h"
 #include "g2o_types_sba_api.h"
+#include "parameter_cameraparameters.h"
 #include "vertex_se3_expmap.h"
-
-#include "g2o/config.h"
-#include "g2o/core/hyper_graph_action.h"
 
 namespace g2o {
 
-/**
- * \brief 6D edge between two Vertex6
- */
-class G2O_TYPES_SBA_API EdgeSE3Expmap
-    : public BaseBinaryEdge<6, SE3Quat, VertexSE3Expmap, VertexSE3Expmap> {
+class G2O_TYPES_SBA_API EdgeProjectXYZ2UVD
+    : public BaseBinaryEdge<3, Vector3, VertexPointXYZ, VertexSE3Expmap> {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-  EdgeSE3Expmap();
 
+  EdgeProjectXYZ2UVD();
   bool read(std::istream& is);
   bool write(std::ostream& os) const;
   void computeError();
-  void linearizeOplus();
+  virtual void linearizeOplus();
+
+ public:
+  CameraParameters* _cam;  // TODO make protected member?
 };
+
 
 #ifdef G2O_HAVE_OPENGL
   /**
    * \brief Visualize a 3D pose-pose constraint
    */
-  class G2O_TYPES_SBA_API EdgeSE3ExpmapDrawAction: public DrawAction{
+  class G2O_TYPES_SBA_API EdgeProjectXYZ2UVDDrawAction: public DrawAction{
   public:
-    EdgeSE3ExpmapDrawAction();
+    EdgeProjectXYZ2UVDDrawAction();
     virtual HyperGraphElementAction* operator()(HyperGraph::HyperGraphElement* element, 
             HyperGraphElementAction::Parameters* params_);
+  private:
+    Eigen::Vector3d getDirectionVector(const CameraParameters* cam, Eigen::Vector2d kpt);
   };
 #endif
-
 }  // namespace g2o
 
 #endif
